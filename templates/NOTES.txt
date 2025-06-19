@@ -9,4 +9,4 @@ To see the status of the installation
       sleep 2
       kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }}
     done
-    kubectl logs -f $(kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }} -o jsonpath='{.items[*].metadata.name}')
+    kubectl logs -f --namespace {{ .Release.Namespace }} $(kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }} -o jsonpath='{.items[*].metadata.name}')

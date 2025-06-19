@@ -1,4 +1,4 @@
-# cloudogu/gop-helmm
+# cloudogu/gop-helm
 
 A Helm chart for [GOP](https://github.com/cloudogu/gitops-playground).
 
@@ -20,7 +20,7 @@ helm upgrade -i gop oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --
 
 # Alternative: use heredoc. Advantage: config map stays in cluster for reference 
 # Consider adding --version for determinism
- helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF | yaml
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
 image:
   tag: a712542
 config:
@@ -56,9 +56,10 @@ stringData:
 EOF
 
 # Consider adding --version for determinism
-helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF | yaml
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
 image:
   tag: a712542
+  configSecret: gop
 config:
   application:
     baseUrl: http://localhost
@@ -70,3 +71,122 @@ config:
 configSecret: gop
 EOF
 ```
+
+# Managing GOP via GitOps
+
+After the initial version is deployed, we recommend adding an application that allows for managing GOP via GitOps.
+
+This allows for upgrading all cluster-resources managed by GOP or adding more features later via a single git commit.
+
+## Simple example
+Commit this Argo CD app to 
+
+* Repo `argocd/cluster-resources`
+* Path: `argocd`
+* Filename: `gop.yaml`
+
+e.g. via http://scmm.localhost/scm/repo/argocd/cluster-resources/code/sourceext/create/main/argocd
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gop
+  namespace: argocd
+spec:
+  destination:
+    namespace: gop
+    server: https://kubernetes.default.svc
+  project: argocd
+  sources:
+    - repoURL: ghcr.io/cloudogu
+      chart: gop-helm
+      targetRevision: 0.1.0
+      helm:
+        valuesObject:
+          # configSecret: gop
+          image:
+            tag: a712542
+          extraArgs:
+            - --argocd
+            - --ingress-nginx
+            - --base-url=http://localhost
+  syncPolicy:
+    automated:
+      selfHeal: true
+```
+
+## Separate values.yaml / config
+
+Create separate config in 
+ * Repo `argocd/cluster-resources`, 
+ * Path: `apps/gop`
+ * Filename: `values.yaml`
+
+e.g. via http://scmm.localhost/scm/repo/argocd/cluster-resources/code/sourceext/create/main/apps/gop
+
+```yaml
+image:
+  tag: a712542
+# Uncomment if you are using a config secret  
+# configSecret: gop
+config:
+  # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/heads/main/docs/configuration.schema.json
+  application:
+    baseUrl: http://localhost
+  features:
+    argocd:
+      active: true
+    ingressNginx:
+      active: true
+```
+
+Then commit Argo CD app to 
+ 
+* Repo `argocd/cluster-resources`
+* Path: `argocd` 
+* Filename: `gop.yaml`
+
+e.g. via http://scmm.localhost/scm/repo/argocd/cluster-resources/code/sourceext/create/main/argocd
+
+```yaml
+apiVersion: argoproj.io/v1alpha1  
+kind: Application  
+metadata:  
+  name: gop  
+  namespace: argocd  
+spec:  
+  destination:
+    namespace: gop
+    server: https://kubernetes.default.svc  
+  project: argocd
+  sources:
+   - repoURL: ghcr.io/cloudogu
+     chart: gop-helm
+     targetRevision: 0.1.0
+     helm:
+       valueFiles:
+         - $clusterResources/apps/gop/values.yaml
+   - repoURL: http://scmm.scm-manager.svc.cluster.local/scm/repo/argocd/cluster-resources
+     path: apps/gop
+     targetRevision: main
+     ref: clusterResources
+  syncPolicy:  
+    automated:  
+      selfHeal: true
+```
+
+## Releasing
+
+On `main` branch:
+
+````shell
+TAG=0.2.0
+
+git checkout main
+[[ $? -eq 0 ]] && git pull
+[[ $? -eq 0 ]] && git tag -s $TAG -m $TAG
+[[ $? -eq 0 ]] && git push --follow-tags
+
+[[ $? -eq 0 ]] && xdg-open https://ecosystem.cloudogu.com/jenkins/job/cloudogu-github/job/gitops-playground/job/main/build?delay=0sec
+````

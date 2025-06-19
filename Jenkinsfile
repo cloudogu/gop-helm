@@ -1,3 +1,7 @@
+#!groovy
+@Library('github.com/cloudogu/ces-build-lib@bc16ce2e')
+import com.cloudogu.ces.cesbuildlib.*
+
 pipeline {
     agent {
         docker {
@@ -59,13 +63,6 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'cesmarvin-ghcr', usernameVariable: 'USER', passwordVariable: 'PASSWORD')]) {
                         sh '''
-                            helm registry login ${HELM_REPO_URL} -u $USER -p $PASSWORD
-
-                            if helm pull oci://${HELM_REPO_URL}/${CHART_NAME}  --version $CHART_VERSION; then
-                                echo "Error: Chart version already exists in repository"
-                                exit 1
-                            fi
-
                             # Seems difficult with jenkins
                             # git tag $CHART_VERSION
                             # git push --tags
@@ -74,6 +71,13 @@ pipeline {
                             
                             # Check if both conditions are true
                             if [[ -n "$CURRENT_TAG" ]] && [[ "$CURRENT_TAG" == "$CHART_VERSION" ]]; then
+                                helm registry login ${HELM_REPO_URL} -u $USER -p $PASSWORD
+
+                                if helm pull oci://${HELM_REPO_URL}/${CHART_NAME}  --version $CHART_VERSION; then
+                                    echo "Error: Chart version already exists in repository"
+                                    exit 1
+                                fi
+                            
                                 helm push $(ls *.tgz) oci://${HELM_REPO_URL}
                                 echo "$CHART_VERSION" > pushedVersion.txt
                             else
@@ -95,6 +99,14 @@ pipeline {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                mailIfStatusChanged(new Git(this).commitAuthorEmail)
             }
         }
     }
