@@ -1,0 +1,12 @@
+Welcome to {{ .Chart.Name }}!
+
+To see the status of the installation  
+  
+    kubectl get job {{ include "gop.fullname" . }} --namespace {{ .Release.Namespace }} 
+    kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }}
+    while ! kubectl logs --namespace {{ .Release.Namespace }} $(kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }} -o jsonpath='{.items[*].metadata.name}') &>/dev/null; do
+      echo "Waiting for container to start..."
+      sleep 2
+      kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }}
+    done
+    kubectl logs -f $(kubectl get pods --namespace {{ .Release.Namespace }} --selector=batch.kubernetes.io/job-name={{ include "gop.fullname" . }} -o jsonpath='{.items[*].metadata.name}')

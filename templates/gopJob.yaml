@@ -1,0 +1,74 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "gop.fullname" . }}
+  labels:
+    {{- include "gop.labels" . | nindent 4 }}
+spec:
+  #ttlSecondsAfterFinished: 300 # do we need cleanup? https://kubernetes.io/docs/concepts/workloads/controllers/ttlafterfinished/
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "gop.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "gop.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+{{- if eq .Values.logLevel "debug" }}
+            - '--debug'
+{{- else if eq .Values.logLevel "trace" }}
+            - '--trace'
+{{- end }}
+{{- if .Values.configSecret }}
+            - '--config-file=/gop/config.yaml'
+{{- end }}
+            - '--config-map={{ include "gop.fullname" . }}'
+            - '--yes'
+            {{- if .Values.extraArgs }}
+            {{- range .Values.extraArgs }}
+            - {{ . }}
+            {{- end }}
+            {{- end }}
+{{- if .Values.configSecret }}
+          volumeMounts:
+            - name: config-secret
+              mountPath: /gop/
+              readOnly: true
+      volumes:
+        - name: config-secret
+          secret:
+            secretName: {{ .Values.configSecret }}
+            items:
+              - key: config.yaml
+                path: config.yaml
+{{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+  backoffLimit: 1
