@@ -37,7 +37,7 @@ EOF
 ## Recommended: Use secret for passwords
 We recommend configuring passwords via a secret.
 ```bash
-kubectl apply -f - <<EOF | yaml
+kubectl apply -f - <<EOF
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -59,7 +59,7 @@ EOF
 helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
 image:
   tag: a712542
-  configSecret: gop
+configSecret: gop
 config:
   application:
     baseUrl: http://localhost
@@ -168,7 +168,7 @@ spec:
        valueFiles:
          - $clusterResources/apps/gop/values.yaml
    - repoURL: http://scmm.scm-manager.svc.cluster.local/scm/repo/argocd/cluster-resources
-     path: apps/gop
+     path: apps/gop1
      targetRevision: main
      ref: clusterResources
   syncPolicy:  
