@@ -178,9 +178,11 @@ spec:
 
 ## Releasing
 
+Make sure the `version` in Chart.yaml is set. Otherwise, the release job will fail.
+
 On `main` branch:
 
-````shell
+```shell
 TAG=0.2.0
 
 git checkout main
@@ -188,5 +190,5 @@ git checkout main
 [[ $? -eq 0 ]] && git tag -s $TAG -m $TAG
 [[ $? -eq 0 ]] && git push --follow-tags
 
-[[ $? -eq 0 ]] && xdg-open https://ecosystem.cloudogu.com/jenkins/job/cloudogu-github/job/gitops-playground/job/main/build?delay=0sec
-````
+[[ $? -eq 0 ]] && xdg-open https://ecosystem.cloudogu.com/jenkins/job/cloudogu-github/job/gop-helm/
+```
