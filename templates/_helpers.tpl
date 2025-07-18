@@ -59,7 +59,7 @@ Create the name of the service account to use
 {{- if .Values.serviceAccount.create }}
 {{- default (include "gop.fullname" .) .Values.serviceAccount.name }}-{{ include "valuesHash" . | lower }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}-{{ include "valuesHash" . | lower }}
+{{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 
