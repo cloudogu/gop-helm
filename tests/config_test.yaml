@@ -3,9 +3,9 @@ suite: test config
 templates:
   - config-map.yaml
 tests:
-  - it:  should set the config
+  - it: should set the config
     set:
-      config: 
+      config:
         ab: cd
     asserts:
       - equal:
