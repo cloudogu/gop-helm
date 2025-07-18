@@ -57,9 +57,13 @@ Create the name of the service account to use
 */}}
 {{- define "gop.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "gop.fullname" .) .Values.serviceAccount.name }}-{{ include "valuesHash" . | lower }}
+  {{- if .Values.serviceAccount.name }}
+    {{ printf "%s-%s" .Values.serviceAccount.name (include "valuesHash" . | lower) }}
+  {{- else }}
+    {{ include "gop.fullname" . }}
+  {{- end }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+  {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
 

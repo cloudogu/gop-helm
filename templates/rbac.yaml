@@ -7,7 +7,7 @@ metadata:
     {{- include "gop.labels" . | nindent 4 }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "gop.serviceAccountName" . }}
+    name: "{{ include "gop.serviceAccountName" . }}"
     namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
@@ -17,7 +17,7 @@ roleRef:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: {{ include "gop.serviceAccountName" . }}
+  name: "{{ include "gop.serviceAccountName" . }}"
   labels:
     {{- include "gop.labels" . | nindent 4 }}
   {{- with .Values.serviceAccount.annotations }}
