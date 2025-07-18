@@ -4,6 +4,6 @@ description: A Helm chart for GOP
 type: application
 icon: https://about.cloudogu.com/assets/cloudogu-logo-f1f26e5c32f240d0a161cebe71e91138ee5662c1f99fb314539a4763ef5959a946130f1a12e9bc39c83c127092a66b919d1fae86fadd5fe9639d06032787a03d.svg
 
-version: 0.2.0
+version: 0.3.0
 
 appVersion: "latest" # We couple app releases and chart releases later

@@ -14,7 +14,7 @@ config: {}
 configSecret: ''
 # configSecret: gop-secret
 
-# logLevel: trace # debug also possible 
+logLevel: trace # debug also possible
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
