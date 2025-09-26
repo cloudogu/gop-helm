@@ -13,15 +13,17 @@ If release name contains chart name it will be used as a full name.
 */}}
 
 {{- define "gop.fullname" -}}
+{{- $hash := include "valuesHash" . | lower | trim }}
 {{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 50 | trimSuffix "-" }}-{{ include "valuesHash" . | lower }}
+  {{- printf "%s-%s" (.Values.fullnameOverride | trunc 50 | trimSuffix "-") $hash }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 50 | trimSuffix "-" }}-{{ include "valuesHash" . | lower }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 50 | trimSuffix "-" }}-{{ include "valuesHash" . | lower }}
-{{- end }}
+  {{- $name := default .Chart.Name .Values.nameOverride | trim }}
+  {{- $release := .Release.Name | trim }}
+  {{- if contains $name $release }}
+    {{- printf "%s-%s" ($release | trunc 50 | trimSuffix "-") $hash }}
+  {{- else }}
+    {{- printf "%s-%s-%s" $release $name $hash | trunc 50 | trimSuffix "-" }}
+  {{- end }}
 {{- end }}
 {{- end }}
 
