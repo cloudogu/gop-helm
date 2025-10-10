@@ -11,7 +11,7 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## Simple local installation
 ```bash
-VERSION='07092fd'
+VERSION='07092fdf'
 bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${VERSION}/scripts/init-cluster.sh")
 
 # Consider adding --version for determinism
