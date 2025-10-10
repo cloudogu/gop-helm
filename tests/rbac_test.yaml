@@ -1,0 +1,29 @@
+suite: Tests RBAC templating
+templates:
+  - templates/rbac.yaml
+release:
+  name: goptest
+
+tests:
+  - it: handles whitespace in serviceAccount correctly
+    set:
+      serviceAccount.create: true
+      serviceAccount.name: " my-custom-sa"
+    documentSelector:
+      path: kind
+      value: ClusterRoleBinding
+    asserts:
+      - matchRegex:
+          path: subjects[0].name
+          pattern: "my-custom-sa-[a-z0-9]{8}$"
+
+  - it: handles whitespace in serviceAccount correctly with releaseName
+    set:
+      serviceAccount.create: true
+    documentSelector:
+      path: kind
+      value: ClusterRoleBinding
+    asserts:
+      - matchRegex:
+          path: subjects[0].name
+          pattern: "goptest-gop-helm-[a-z0-9]{8}$"

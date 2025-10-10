@@ -22,13 +22,17 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: "{{ include "gop.serviceAccountName" . }}"
+      serviceAccountName: "{{ include "gop.serviceAccountName" .  | trim }}"
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.resources }}
+          resources:
+{{ toYaml . | nindent 12 }}
+{{- end }}
           args:
 {{- if eq .Values.logLevel "debug" }}
             - '--debug'

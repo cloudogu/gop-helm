@@ -1,0 +1,24 @@
+suite: Tests common Job templating
+templates:
+  - templates/gopJob.yaml
+
+tests:
+  - it: should have CPU and memory limits and requests set correctly
+    set:
+      resources.limits.cpu: "500m"
+      resources.limits.memory: "256Mi"
+      resources.requests.cpu: "250m"
+      resources.requests.memory: "128Mi"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.cpu
+          value: "500m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.limits.memory
+          value: "256Mi"
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.cpu
+          value: "250m"
+      - equal:
+          path: spec.template.spec.containers[0].resources.requests.memory
+          value: "128Mi"

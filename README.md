@@ -11,18 +11,18 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## Simple local installation
 ```bash
-VERSION='a712542'  
-bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/$VERSION/scripts/init-cluster.sh")
+VERSION='07092fd'
+bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${VERSION}/scripts/init-cluster.sh")
 
 # Consider adding --version for determinism
-helm upgrade -i gop oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --set image.tag=$VERSION \
+helm upgrade -i gop oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --set image.tag=${VERSION} \
   --set extraArgs="{ --argocd, --ingress-nginx, --base-url=http://localhost}"
 
 # Alternative: use heredoc. Advantage: config map stays in cluster for reference 
 # Consider adding --version for determinism
 helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
 image:
-  tag: a712542
+  tag: ${VERSION}
 config:
   application:
     baseUrl: http://localhost
