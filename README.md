@@ -11,7 +11,7 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## Simple local installation
 ```bash
-VERSION='07092fdf'
+VERSION='0.12.0'
 bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${VERSION}/scripts/init-cluster.sh")
 
 # Consider adding --version for determinism
@@ -190,5 +190,5 @@ git checkout main
 [[ $? -eq 0 ]] && git tag -s $TAG -m $TAG
 [[ $? -eq 0 ]] && git push --follow-tags
 
-[[ $? -eq 0 ]] && xdg-open https://ecosystem.cloudogu.com/jenkins/job/cloudogu-github/job/gop-helm/
+[[ $? -eq 0 ]] && xdg-open https://ecosystem.cloudogu.com/jenkins/job/cloudogu-github/job/gop-helm/job/main/build?delay=0sec
 ```
