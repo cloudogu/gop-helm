@@ -3,6 +3,28 @@ templates:
   - templates/gopJob.yaml
 
 tests:
+  - it: should use the pinned GOP image by default
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "ghcr.io/cloudogu/gitops-playground:0.18.3"
+
+  - it: should fall back to the chart appVersion when the image tag is empty
+    set:
+      image.tag: ""
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "ghcr.io/cloudogu/gitops-playground:0.18.3"
+
+  - it: should allow overriding the GOP image tag
+    set:
+      image.tag: "custom-version"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: "ghcr.io/cloudogu/gitops-playground:custom-version"
+
   - it: should have CPU and memory limits and requests set correctly
     set:
       resources.limits.cpu: "500m"
