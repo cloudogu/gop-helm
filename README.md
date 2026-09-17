@@ -9,20 +9,32 @@ Afterward, you could run helm uninstall. This would only uninstall the initial j
 We recommend adding an application that allows for managing [GOP via GitOps](#managing-gop-via-gitops).
 This allows for upgrading all cluster-resources managed by GOP or adding more features later via a single git commit.
 
-## Simple local installation
-```bash
-VERSION='0.12.0'
-bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${VERSION}/scripts/init-cluster.sh")
+## GOP version and configuration
 
-# Consider adding --version for determinism
-helm upgrade -i gop oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --set image.tag=${VERSION} \
+This chart pins the GOP image to version `0.18.3`. If `image.tag` is empty, the chart uses the pinned
+`appVersion` from `Chart.yaml` as a fallback. Set `image.tag` only when you deliberately want to override
+the GOP version shipped with this chart.
+
+The complete GOP configuration is maintained in the GitOps Playground repository:
+
+* [Configuration reference for GOP 0.18.3](https://github.com/cloudogu/gitops-playground/blob/0.18.3/docs/Configuration.md)
+* [Configuration schema for GOP 0.18.3](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.18.3/docs/configuration.schema.json)
+
+Use the documentation matching the GOP image version. Configuration keys may change between GOP releases.
+
+## Simple local installation
+
+```bash
+GOP_VERSION='0.18.3'
+CHART_VERSION='0.4.1'
+bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${GOP_VERSION}/scripts/init-cluster.sh")
+
+# Pin the chart version for a reproducible installation.
+helm upgrade -i gop oci://ghcr.io/cloudogu/gop-helm --version "${CHART_VERSION}" -n gop --create-namespace \
   --set extraArgs="{ --argocd, --ingress-nginx, --base-url=http://localhost}"
 
-# Alternative: use heredoc. Advantage: config map stays in cluster for reference 
-# Consider adding --version for determinism
-helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
-image:
-  tag: ${VERSION}
+# Alternative: use heredoc. Advantage: config map stays in cluster for reference
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version "${CHART_VERSION}" -n gop --create-namespace --values - <<EOF
 config:
   application:
     baseUrl: http://localhost
@@ -35,7 +47,9 @@ EOF
 ```
 
 ## Recommended: Use secret for passwords
+
 We recommend configuring passwords via a secret.
+
 ```bash
 kubectl apply -f - <<EOF
 apiVersion: v1
@@ -55,10 +69,7 @@ stringData:
       password: "admin2"
 EOF
 
-# Consider adding --version for determinism
-helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm -n gop --create-namespace --values - <<EOF
-image:
-  tag: a712542
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version 0.4.1 -n gop --create-namespace --values - <<EOF
 configSecret: gop
 config:
   application:
@@ -68,7 +79,6 @@ config:
       active: true
     ingressNginx:
       active: true
-configSecret: gop
 EOF
 ```
 
@@ -101,12 +111,10 @@ spec:
   sources:
     - repoURL: ghcr.io/cloudogu
       chart: gop-helm
-      targetRevision: 0.1.0
+      targetRevision: 0.4.1
       helm:
         valuesObject:
           # configSecret: gop
-          image:
-            tag: a712542
           extraArgs:
             - --argocd
             - --ingress-nginx
@@ -126,12 +134,10 @@ Create separate config in
 e.g. via http://scmm.localhost/scm/repo/argocd/cluster-resources/code/sourceext/create/main/apps/gop
 
 ```yaml
-image:
-  tag: a712542
 # Uncomment if you are using a config secret  
 # configSecret: gop
 config:
-  # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/heads/main/docs/configuration.schema.json
+  # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.18.3/docs/configuration.schema.json
   application:
     baseUrl: http://localhost
   features:
@@ -163,7 +169,7 @@ spec:
   sources:
    - repoURL: ghcr.io/cloudogu
      chart: gop-helm
-     targetRevision: 0.1.0
+     targetRevision: 0.4.1
      helm:
        valueFiles:
          - $clusterResources/apps/gop/values.yaml
@@ -178,12 +184,20 @@ spec:
 
 ## Releasing
 
-Make sure the `version` in Chart.yaml is set. Otherwise, the release job will fail.
+Before releasing the chart:
+
+1. Set `version` in `Chart.yaml` to the new chart version.
+2. Set `appVersion` in `Chart.yaml` and `image.tag` in `values.yaml` to the same released GOP version.
+3. Update the version-specific GOP configuration and schema links in `README.md` and `values.yaml`.
+4. Run `helm lint .` and `helm unittest .`.
+
+Keeping `image.tag` and `appVersion` pinned prevents installations from unexpectedly using `latest`.
+The chart release job requires the Git tag to match `version` from `Chart.yaml`.
 
 On `main` branch:
 
 ```shell
-TAG=0.2.0
+TAG=0.4.1
 
 git checkout main
 [[ $? -eq 0 ]] && git pull

@@ -6,7 +6,7 @@ extraArgs: []
 #  - '--output-config-file' # For testing: Only run the job, don't deploy anything
 
 config: {}
-# yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/heads/main/docs/configuration.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.18.3/docs/configuration.schema.json
 #  features:
 #    ingressNginx:
 #      active: true
@@ -21,8 +21,8 @@ image:
   repository: ghcr.io/cloudogu/gitops-playground
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  # Pinned GOP release. If empty, the chart appVersion is used.
+  tag: "0.18.3"
 
 # This is to override the chart name.
 nameOverride: ""
