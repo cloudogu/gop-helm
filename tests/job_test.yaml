@@ -7,7 +7,7 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: "ghcr.io/cloudogu/gitops-playground:0.18.3"
+          value: "ghcr.io/cloudogu/gitops-playground:0.19.0"
 
   - it: should fall back to the chart appVersion when the image tag is empty
     set:
@@ -15,7 +15,7 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].image
-          value: "ghcr.io/cloudogu/gitops-playground:0.18.3"
+          value: "ghcr.io/cloudogu/gitops-playground:0.19.0"
 
   - it: should allow overriding the GOP image tag
     set:

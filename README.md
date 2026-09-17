@@ -11,22 +11,22 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## GOP version and configuration
 
-This chart pins the GOP image to version `0.18.3`. If `image.tag` is empty, the chart uses the pinned
+This chart pins the GOP image to version `0.19.0`. If `image.tag` is empty, the chart uses the pinned
 `appVersion` from `Chart.yaml` as a fallback. Set `image.tag` only when you deliberately want to override
 the GOP version shipped with this chart.
 
 The complete GOP configuration is maintained in the GitOps Playground repository:
 
-* [Configuration reference for GOP 0.18.3](https://github.com/cloudogu/gitops-playground/blob/0.18.3/docs/Configuration.md)
-* [Configuration schema for GOP 0.18.3](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.18.3/docs/configuration.schema.json)
+* [Configuration reference for GOP 0.19.0](https://github.com/cloudogu/gitops-playground/blob/0.19.0/docs/Configuration.md)
+* [Configuration schema for GOP 0.19.0](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.19.0/docs/configuration.schema.json)
 
 Use the documentation matching the GOP image version. Configuration keys may change between GOP releases.
 
 ## Simple local installation
 
 ```bash
-GOP_VERSION='0.18.3'
-CHART_VERSION='0.4.1'
+GOP_VERSION='0.19.0'
+CHART_VERSION='0.4.2'
 bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${GOP_VERSION}/scripts/init-cluster.sh")
 
 # Pin the chart version for a reproducible installation.
@@ -69,7 +69,7 @@ stringData:
       password: "admin2"
 EOF
 
-helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version 0.4.1 -n gop --create-namespace --values - <<EOF
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version 0.4.2 -n gop --create-namespace --values - <<EOF
 configSecret: gop
 config:
   application:
@@ -111,7 +111,7 @@ spec:
   sources:
     - repoURL: ghcr.io/cloudogu
       chart: gop-helm
-      targetRevision: 0.4.1
+      targetRevision: 0.4.2
       helm:
         valuesObject:
           # configSecret: gop
@@ -137,7 +137,7 @@ e.g. via http://scmm.localhost/scm/repo/argocd/cluster-resources/code/sourceext/
 # Uncomment if you are using a config secret  
 # configSecret: gop
 config:
-  # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.18.3/docs/configuration.schema.json
+  # yaml-language-server: $schema=https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.19.0/docs/configuration.schema.json
   application:
     baseUrl: http://localhost
   features:
@@ -169,7 +169,7 @@ spec:
   sources:
    - repoURL: ghcr.io/cloudogu
      chart: gop-helm
-     targetRevision: 0.4.1
+     targetRevision: 0.4.2
      helm:
        valueFiles:
          - $clusterResources/apps/gop/values.yaml
@@ -197,7 +197,7 @@ The chart release job requires the Git tag to match `version` from `Chart.yaml`.
 On `main` branch:
 
 ```shell
-TAG=0.4.1
+TAG=0.4.2
 
 git checkout main
 [[ $? -eq 0 ]] && git pull
