@@ -11,7 +11,7 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## GOP version and configuration
 
-This chart pins the GOP image to version `0.19.0`. If `image.tag` is empty, the chart uses the pinned
+This chart pins the GOP image to version `0.19.2`. If `image.tag` is empty, the chart uses the pinned
 `appVersion` from `Chart.yaml` as a fallback. Set `image.tag` only when you deliberately want to override
 the GOP version shipped with this chart.
 
