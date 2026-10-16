@@ -17,8 +17,8 @@ the GOP version shipped with this chart.
 
 The complete GOP configuration is maintained in the GitOps Playground repository:
 
-* [Configuration reference for GOP 0.19.0](https://github.com/cloudogu/gitops-playground/blob/0.19.0/docs/Configuration.md)
-* [Configuration schema for GOP 0.19.0](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.19.0/docs/configuration.schema.json)
+* [Configuration reference for GOP 0.19.2](https://github.com/cloudogu/gitops-playground/blob/0.19.2/docs/Configuration.md)
+* [Configuration schema for GOP 0.19.2](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.19.2/docs/configuration.schema.json)
 
 Use the documentation matching the GOP image version. Configuration keys may change between GOP releases.
 
