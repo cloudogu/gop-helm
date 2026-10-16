@@ -25,8 +25,8 @@ Use the documentation matching the GOP image version. Configuration keys may cha
 ## Simple local installation
 
 ```bash
-GOP_VERSION='0.19.0'
-CHART_VERSION='0.4.2'
+GOP_VERSION='0.19.2'
+CHART_VERSION='0.4.3'
 bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${GOP_VERSION}/scripts/init-cluster.sh")
 
 # Pin the chart version for a reproducible installation.
@@ -69,7 +69,7 @@ stringData:
       password: "admin2"
 EOF
 
-helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version 0.4.2 -n gop --create-namespace --values - <<EOF
+helm upgrade gop -i oci://ghcr.io/cloudogu/gop-helm --version 0.4.3 -n gop --create-namespace --values - <<EOF
 configSecret: gop
 config:
   application:
@@ -111,7 +111,7 @@ spec:
   sources:
     - repoURL: ghcr.io/cloudogu
       chart: gop-helm
-      targetRevision: 0.4.2
+      targetRevision: 0.4.3
       helm:
         valuesObject:
           # configSecret: gop
@@ -169,7 +169,7 @@ spec:
   sources:
    - repoURL: ghcr.io/cloudogu
      chart: gop-helm
-     targetRevision: 0.4.2
+     targetRevision: 0.4.3
      helm:
        valueFiles:
          - $clusterResources/apps/gop/values.yaml
@@ -197,7 +197,7 @@ The chart release job requires the Git tag to match `version` from `Chart.yaml`.
 On `main` branch:
 
 ```shell
-TAG=0.4.2
+TAG=0.4.3
 
 git checkout main
 [[ $? -eq 0 ]] && git pull
