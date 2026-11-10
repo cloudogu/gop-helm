@@ -11,21 +11,21 @@ This allows for upgrading all cluster-resources managed by GOP or adding more fe
 
 ## GOP version and configuration
 
-This chart pins the GOP image to version `0.19.2`. If `image.tag` is empty, the chart uses the pinned
+This chart pins the GOP image to version `0.20.0`. If `image.tag` is empty, the chart uses the pinned
 `appVersion` from `Chart.yaml` as a fallback. Set `image.tag` only when you deliberately want to override
 the GOP version shipped with this chart.
 
 The complete GOP configuration is maintained in the GitOps Playground repository:
 
-* [Configuration reference for GOP 0.19.2](https://github.com/cloudogu/gitops-playground/blob/0.19.2/docs/Configuration.md)
-* [Configuration schema for GOP 0.19.2](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.19.2/docs/configuration.schema.json)
+* [Configuration reference for GOP 0.20.0](https://github.com/cloudogu/gitops-playground/blob/0.20.0/docs/Configuration.md)
+* [Configuration schema for GOP 0.20.0](https://raw.githubusercontent.com/cloudogu/gitops-playground/refs/tags/0.20.0/docs/configuration.schema.json)
 
 Use the documentation matching the GOP image version. Configuration keys may change between GOP releases.
 
 ## Simple local installation
 
 ```bash
-GOP_VERSION='0.19.2'
+GOP_VERSION='0.20.0'
 CHART_VERSION='0.4.3'
 bash <(curl -s "https://raw.githubusercontent.com/cloudogu/gitops-playground/${GOP_VERSION}/scripts/init-cluster.sh")
 
